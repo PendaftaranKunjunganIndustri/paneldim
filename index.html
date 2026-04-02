@@ -101,7 +101,6 @@
         }
 
         .dash-header h2 { font-family: 'Syncopate', sans-serif; color: var(--primary-color); font-size: 18px; }
-        
         .logout-btn { color: var(--error-color); border-color: rgba(244,67,54,0.3); }
 
         /* TABEL RESPONSIF */
@@ -111,7 +110,7 @@
             box-shadow: inset 5px 5px 15px var(--neumorphic-shadow), inset -5px -5px 15px var(--neumorphic-light);
         }
 
-        table { width: 100%; border-collapse: collapse; text-align: left; min-width: 1000px; }
+        table { width: 100%; border-collapse: collapse; text-align: left; min-width: 1100px; }
         th {
             background: rgba(0, 230, 255, 0.1); color: var(--primary-color); font-size: 11px;
             text-transform: uppercase; letter-spacing: 1px; padding: 15px;
@@ -120,27 +119,56 @@
         td { padding: 12px 15px; font-size: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #d1d5db; vertical-align: middle; }
         tr:hover td { background-color: rgba(255,255,255,0.02); color: #fff; }
 
-        .status-badge { padding: 5px 10px; border-radius: 20px; font-size: 10px; font-weight: 700; }
+        .status-badge { padding: 5px 10px; border-radius: 20px; font-size: 10px; font-weight: 700; display: inline-block; text-align: center; }
         .status-pending { background: rgba(255, 152, 0, 0.2); color: var(--warning-color); border: 1px solid var(--warning-color); }
         .status-approved { background: rgba(76, 175, 80, 0.2); color: var(--success-color); border: 1px solid var(--success-color); }
-
-        .img-link {
-            color: var(--primary-color); text-decoration: none; display: inline-block;
-            margin: 2px 0; background: rgba(0, 230, 255, 0.1); padding: 4px 8px; border-radius: 4px; font-size: 10px;
-        }
-        .img-link:hover { background: rgba(0, 230, 255, 0.3); }
 
         .action-cell { display: flex; gap: 8px; flex-wrap: wrap; }
         .btn-verify { color: var(--success-color); border-color: rgba(76,175,80,0.3); padding: 6px 10px; font-size: 10px; }
         .btn-delete { color: var(--error-color); border-color: rgba(244,67,54,0.3); padding: 6px 10px; font-size: 10px; }
 
+        /* FITUR THUMBNAIL & LIGHTBOX GAMBAR */
+        .img-grid { display: flex; gap: 8px; flex-wrap: wrap; }
+        .thumbnail-container { text-align: center; }
+        .thumbnail-container span { display: block; font-size: 9px; color: var(--primary-color); margin-bottom: 3px; font-weight: bold; }
+        .thumbnail {
+            width: 45px; height: 45px; object-fit: cover; border-radius: 5px; 
+            border: 1px solid rgba(0, 230, 255, 0.5); cursor: pointer; transition: 0.3s;
+        }
+        .thumbnail:hover { transform: scale(1.15); box-shadow: 0 0 15px rgba(0, 230, 255, 0.8); z-index: 5; position: relative;}
+
+        /* Modal Lightbox untuk melihat gambar penuh */
+        #imageModal {
+            display: none; position: fixed; z-index: 9999; left: 0; top: 0; 
+            width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); backdrop-filter: blur(10px);
+        }
+        .modal-content {
+            margin: auto; display: block; max-width: 90%; max-height: 85vh; 
+            margin-top: 5vh; border-radius: 10px; border: 2px solid var(--primary-color);
+            box-shadow: 0 0 30px rgba(0, 230, 255, 0.3); object-fit: contain;
+        }
+        .close-modal {
+            position: absolute; top: 20px; right: 35px; color: #fff; font-size: 40px; 
+            font-weight: bold; cursor: pointer; transition: 0.3s;
+        }
+        .close-modal:hover { color: var(--error-color); }
+        #modalCaption { text-align: center; color: var(--primary-color); padding: 15px; font-weight: bold; font-size: 16px; letter-spacing: 2px; }
+
+        /* Responsif HP Ekstra */
         @media (max-width: 768px) {
             .dash-header { flex-direction: column; gap: 15px; text-align: center; }
-            #dashboardSection { padding: 15px; }
+            #dashboardSection { padding: 15px; height: 98vh;}
+            table { min-width: 900px; } /* Memastikan tabel bisa di-scroll horizontal tanpa rusak */
         }
     </style>
 </head>
 <body>
+
+    <div id="imageModal">
+        <span class="close-modal" onclick="closeModal()">&times;</span>
+        <img class="modal-content" id="fullImage">
+        <div id="modalCaption"></div>
+    </div>
 
     <div id="loginSection">
         <div class="header">
@@ -167,9 +195,9 @@
         <div class="dash-header">
             <div>
                 <h2>AICE COMMAND CENTER</h2>
-                <p style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">Data Pendaftaran Lengkap</p>
+                <p style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">Data Pendaftaran Lengkap Terenkripsi</p>
             </div>
-            <div style="display: flex; gap: 10px;">
+            <div style="display: flex; gap: 10px; justify-content: center;">
                 <button class="btn-action" id="btnRefresh"><i class="fas fa-sync-alt"></i> REFRESH</button>
                 <button class="btn-action logout-btn" id="btnLogout"><i class="fas fa-sign-out-alt"></i> DISCONNECT</button>
             </div>
@@ -184,10 +212,10 @@
                         <th>Waktu</th>
                         <th>Info Mahasiswa</th>
                         <th>Akademik</th>
-                        <th>Bukti IG</th>
-                        <th>Info Pembayaran</th>
+                        <th>File Bukti (Klik Foto)</th>
+                        <th>Info Rekening</th>
                         <th>Status</th>
-                        <th>Aksi</th>
+                        <th>Aksi Otorisasi</th>
                     </tr>
                 </thead>
                 <tbody id="tableBody">
@@ -260,7 +288,6 @@
             tableBody.innerHTML = '';
             
             try {
-                // Pastikan nama koleksinya sama: pendaftaran_aice_lengkap
                 const q = query(collection(db, "pendaftaran_aice_lengkap"), orderBy("tanggalPendaftaran", "desc"));
                 const querySnapshot = await getDocs(q);
                 
@@ -275,25 +302,41 @@
                     tr.innerHTML = `
                         <td style="font-size:10px;">${waktu}</td>
                         <td>
-                            <strong>${data.nama}</strong><br>
-                            <span style="color:var(--primary-color); font-family:monospace;">NIM: ${data.nim}</span>
+                            <strong style="font-size: 14px;">${data.nama}</strong><br>
+                            <span style="color:var(--primary-color); font-family:monospace; font-size:13px;">NIM: ${data.nim}</span>
                         </td>
-                        <td style="font-size:11px;">
-                            ${data.universitas} - ${data.fakultas}<br>
-                            ${data.prodi} (Smt: ${data.semester})<br>
+                        <td style="font-size:11px; line-height: 1.5;">
+                            <strong style="color:#fff;">${data.universitas}</strong><br>
+                            Fak: ${data.fakultas}<br>
+                            Prodi: ${data.prodi} (Smt: ${data.semester})<br>
                             Kelas: ${data.kelas}
                         </td>
                         <td>
-                            <a href="${data.buktiIgHmpsUrl}" target="_blank" class="img-link"><i class="fas fa-external-link-alt"></i> IG HMPS</a><br>
-                            <a href="${data.buktiIgUpuUrl}" target="_blank" class="img-link"><i class="fas fa-external-link-alt"></i> IG UPU</a>
+                            <div class="img-grid">
+                                <div class="thumbnail-container">
+                                    <span>KTM</span>
+                                    <img src="${data.buktiKtmUrl}" class="thumbnail" onclick="openModal('${data.buktiKtmUrl}', 'Foto KTM - ${data.nama}')" onerror="this.src='https://via.placeholder.com/50?text=Error'">
+                                </div>
+                                <div class="thumbnail-container">
+                                    <span>IG HMPS</span>
+                                    <img src="${data.buktiIgHmpsUrl}" class="thumbnail" onclick="openModal('${data.buktiIgHmpsUrl}', 'Bukti Follow HMPS - ${data.nama}')" onerror="this.src='https://via.placeholder.com/50?text=Error'">
+                                </div>
+                                <div class="thumbnail-container">
+                                    <span>IG UPU</span>
+                                    <img src="${data.buktiIgUpuUrl}" class="thumbnail" onclick="openModal('${data.buktiIgUpuUrl}', 'Bukti Follow UPU - ${data.nama}')" onerror="this.src='https://via.placeholder.com/50?text=Error'">
+                                </div>
+                                <div class="thumbnail-container">
+                                    <span>RESI</span>
+                                    <img src="${data.buktiPembayaranUrl}" class="thumbnail" style="border-color: var(--success-color);" onclick="openModal('${data.buktiPembayaranUrl}', 'Bukti Pembayaran - ${data.nama}')" onerror="this.src='https://via.placeholder.com/50?text=Error'">
+                                </div>
+                            </div>
                         </td>
                         <td style="font-size:11px;">
-                            Bank: <strong>${data.namaBank}</strong><br>
-                            <a href="${data.buktiPembayaranUrl}" target="_blank" class="img-link" style="background:rgba(76,175,80,0.2); color:#81c784;"><i class="fas fa-receipt"></i> Cek Resi</a>
+                            Bank: <strong style="color:var(--primary-color);">${data.namaBank}</strong>
                         </td>
                         <td><span class="status-badge ${statusClass}">${data.status}</span></td>
                         <td class="action-cell">
-                            ${data.status !== "APPROVED" ? `<button class="btn-action btn-verify" onclick="verifyData('${docId}')"><i class="fas fa-check"></i> VERIFIKASI</button>` : ''}
+                            ${data.status !== "APPROVED" ? `<button class="btn-action btn-verify" onclick="verifyData('${docId}')"><i class="fas fa-check"></i> TERIMA</button>` : ''}
                             <button class="btn-action btn-delete" onclick="deleteData('${docId}')"><i class="fas fa-trash"></i> HAPUS</button>
                         </td>
                     `;
@@ -307,9 +350,25 @@
             }
         }
 
-        // Fungsi Global untuk Tombol HTML
+        // FUNGSI LIGHTBOX GAMBAR
+        window.openModal = function(imgSrc, caption) {
+            document.getElementById('fullImage').src = imgSrc;
+            document.getElementById('modalCaption').innerText = caption;
+            document.getElementById('imageModal').style.display = 'block';
+        }
+
+        window.closeModal = function() {
+            document.getElementById('imageModal').style.display = 'none';
+        }
+
+        // Menutup modal jika diklik di luar gambar
+        document.getElementById('imageModal').addEventListener('click', function(e) {
+            if(e.target === this) { closeModal(); }
+        });
+
+        // Fungsi Global untuk Tombol Verifikasi & Hapus
         window.verifyData = async function(docId) {
-            if(confirm("Setujui pendaftar ini?")) {
+            if(confirm("Otorisasi: Setujui pendaftar ini?")) {
                 try {
                     await updateDoc(doc(db, "pendaftaran_aice_lengkap", docId), { status: "APPROVED" });
                     fetchData();
@@ -318,7 +377,7 @@
         };
 
         window.deleteData = async function(docId) {
-            if(confirm("PERINGATAN: Data akan dihapus permanen. Lanjutkan?")) {
+            if(confirm("PERINGATAN KRITIS: Data akan dihapus permanen dari server. Lanjutkan?")) {
                 try {
                     await deleteDoc(doc(db, "pendaftaran_aice_lengkap", docId));
                     fetchData();
