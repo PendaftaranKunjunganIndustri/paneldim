@@ -112,7 +112,7 @@
             box-shadow: inset 5px 5px 15px var(--neumorphic-shadow), inset -5px -5px 15px var(--neumorphic-light);
         }
 
-        table { width: 100%; border-collapse: collapse; text-align: left; min-width: 1300px; }
+        table { width: 100%; border-collapse: collapse; text-align: left; min-width: 1350px; }
         th {
             background: rgba(0, 230, 255, 0.1); color: var(--primary-color); font-size: 11px;
             text-transform: uppercase; letter-spacing: 1px; padding: 15px;
@@ -210,8 +210,7 @@
                 <thead>
                     <tr>
                         <th>Waktu</th>
-                        <th>Info Mahasiswa</th>
-                        <th>Akademik</th>
+                        <th>Info Mahasiswa & Wali</th> <th>Akademik</th>
                         <th>File Bukti</th>
                         <th>Info Pembayaran</th>
                         <th>Status</th>
@@ -302,14 +301,19 @@
 
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
-                        <td style="font-size:10px;">${waktu}</td>
-                        <td style="line-height: 1.6;">
+                        <td style="font-size:10px; width: 100px;">${waktu}</td>
+                        <td style="line-height: 1.6; min-width: 250px;">
                             <strong style="font-size: 14px;">${data.nama}</strong><br>
                             <span style="color:var(--primary-color); font-family:monospace; font-size:12px;">NIM: ${data.nim}</span><br>
                             <span style="font-size:10px; color:#aaa;"><i class="fab fa-whatsapp"></i> ${data.noWa || '-'}</span><br>
                             <span style="font-size:10px; color:#aaa;"><i class="fas fa-envelope"></i> ${data.email || '-'}</span>
+                            
+                            <div style="margin-top: 8px; padding: 6px 8px; background: rgba(255,152,0,0.1); border-left: 2px solid var(--warning-color); border-radius: 4px; font-size: 10px; color: #ddd; line-height: 1.4;">
+                                <strong style="color: var(--warning-color);"><i class="fas fa-user-shield"></i> Kontak Wali:</strong><br>
+                                <span style="white-space: pre-line;">${data.kontakWali ? data.kontakWali : '-'}</span>
+                            </div>
                         </td>
-                        <td style="font-size:11px; line-height: 1.6;">
+                        <td style="font-size:11px; line-height: 1.6; min-width: 220px;">
                             <strong style="color:#fff;">${data.universitas || '-'}</strong><br>
                             Fakultas: ${data.fakultas || '-'}<br>
                             Prodi: ${data.prodi} (Smt: ${data.semester})<br>
@@ -340,7 +344,7 @@
                             Rek: <span style="font-family:monospace; color:#fff;">${data.noRekening || '-'}</span>
                         </td>
                         <td><span class="status-badge ${statusClass}">${data.status}</span></td>
-                        <td class="action-cell">
+                        <td class="action-cell" style="width: 100px;">
                             <button class="btn-action btn-pdf" id="btnPdf-${docId}" onclick="downloadPDF('${docId}')"><i class="fas fa-file-pdf"></i> PDF</button>
                             ${data.status !== "APPROVED" ? `<button class="btn-action btn-verify" onclick="verifyData('${docId}')"><i class="fas fa-check"></i> TERIMA</button>` : ''}
                             <button class="btn-action btn-delete" onclick="deleteData('${docId}')"><i class="fas fa-trash"></i> HAPUS</button>
