@@ -112,7 +112,7 @@
             box-shadow: inset 5px 5px 15px var(--neumorphic-shadow), inset -5px -5px 15px var(--neumorphic-light);
         }
 
-        table { width: 100%; border-collapse: collapse; text-align: left; min-width: 1200px; }
+        table { width: 100%; border-collapse: collapse; text-align: left; min-width: 1300px; }
         th {
             background: rgba(0, 230, 255, 0.1); color: var(--primary-color); font-size: 11px;
             text-transform: uppercase; letter-spacing: 1px; padding: 15px;
@@ -212,10 +212,10 @@
                         <th>Waktu</th>
                         <th>Info Mahasiswa</th>
                         <th>Akademik</th>
-                        <th>File Bukti (Klik Foto)</th>
-                        <th>Info Rekening</th>
+                        <th>File Bukti</th>
+                        <th>Info Pembayaran</th>
                         <th>Status</th>
-                        <th>Aksi Otorisasi</th>
+                        <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody id="tableBody">
@@ -303,15 +303,17 @@
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
                         <td style="font-size:10px;">${waktu}</td>
-                        <td>
+                        <td style="line-height: 1.6;">
                             <strong style="font-size: 14px;">${data.nama}</strong><br>
-                            <span style="color:var(--primary-color); font-family:monospace; font-size:13px;">NIM: ${data.nim}</span>
+                            <span style="color:var(--primary-color); font-family:monospace; font-size:12px;">NIM: ${data.nim}</span><br>
+                            <span style="font-size:10px; color:#aaa;"><i class="fab fa-whatsapp"></i> ${data.noWa || '-'}</span><br>
+                            <span style="font-size:10px; color:#aaa;"><i class="fas fa-envelope"></i> ${data.email || '-'}</span>
                         </td>
-                        <td style="font-size:11px; line-height: 1.5;">
+                        <td style="font-size:11px; line-height: 1.6;">
                             <strong style="color:#fff;">${data.universitas}</strong><br>
                             Fakultas: ${data.fakultas}<br>
-                            Prodi: ${data.prodi} (Semester: ${data.semester})<br>
-                            Kelas: ${data.kelas}
+                            Prodi: ${data.prodi} (Smt: ${data.semester})<br>
+                            Kelas: ${data.kelas} | Thn: ${data.tahunMasuk || '-'}
                         </td>
                         <td>
                             <div class="img-grid">
@@ -328,13 +330,14 @@
                                     <img src="${data.buktiIgUpuUrl}" class="thumbnail" onclick="openModal('${data.buktiIgUpuUrl}', 'Bukti Follow UPU - ${data.nama}')" onerror="this.src='https://via.placeholder.com/50?text=Error'">
                                 </div>
                                 <div class="thumbnail-container">
-                                    <span>PEMBAYARAN</span>
+                                    <span>PAYMENT</span>
                                     <img src="${data.buktiPembayaranUrl}" class="thumbnail" style="border-color: var(--success-color);" onclick="openModal('${data.buktiPembayaranUrl}', 'Bukti Pembayaran - ${data.nama}')" onerror="this.src='https://via.placeholder.com/50?text=Error'">
                                 </div>
                             </div>
                         </td>
-                        <td style="font-size:11px;">
-                            Bank: <strong style="color:var(--primary-color);">${data.namaBank}</strong>
+                        <td style="font-size:11px; line-height: 1.6;">
+                            Bank: <strong style="color:var(--primary-color);">${data.namaBank}</strong><br>
+                            Rek: <span style="font-family:monospace; color:#fff;">${data.noRekening || '-'}</span>
                         </td>
                         <td><span class="status-badge ${statusClass}">${data.status}</span></td>
                         <td class="action-cell">
@@ -379,7 +382,7 @@
             }
         };
 
-        // FUNGSI DOWNLOAD PDF (SUDAH DIPERBAIKI)
+        // FUNGSI DOWNLOAD PDF
         window.downloadPDF = async function(docId) {
             const btn = document.getElementById(`btnPdf-${docId}`);
             const data = window.dataPendaftar[docId];
@@ -390,13 +393,12 @@
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PROSES...';
             btn.disabled = true;
 
-            // 1. Buat Container Sementara (Disembunyikan dari layar)
             const tempContainer = document.createElement('div');
             tempContainer.style.position = 'absolute';
             tempContainer.style.left = '-9999px'; 
             tempContainer.style.top = '0';
             
-            // 2. Isi Container dengan Template PDF
+            // TEMPLATE PDF (Di-update agar memuat data baru secara lengkap)
             tempContainer.innerHTML = `
                 <div id="pdf-content-${docId}" style="width: 800px; padding: 40px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #333; background: #fff;">
                     <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 15px; margin-bottom: 20px;">
@@ -404,45 +406,45 @@
                         <p style="margin: 5px 0 0 0; color: #666; font-size: 14px;">PT. Aice Sumatera Industry</p>
                     </div>
                     
-                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px; font-size: 14px;">
-                        <tr><td style="padding: 10px; border: 1px solid #ddd; width: 35%; background: #f9f9f9;"><strong>Nama Lengkap</strong></td><td style="padding: 10px; border: 1px solid #ddd;">${data.nama}</td></tr>
-                        <tr><td style="padding: 10px; border: 1px solid #ddd; background: #f9f9f9;"><strong>NIM</strong></td><td style="padding: 10px; border: 1px solid #ddd;">${data.nim}</td></tr>
-                        <tr><td style="padding: 10px; border: 1px solid #ddd; background: #f9f9f9;"><strong>Universitas</strong></td><td style="padding: 10px; border: 1px solid #ddd;">${data.universitas}</td></tr>
-                        <tr><td style="padding: 10px; border: 1px solid #ddd; background: #f9f9f9;"><strong>Fakultas / Program Studi</strong></td><td style="padding: 10px; border: 1px solid #ddd;">${data.fakultas} / ${data.prodi}</td></tr>
-                        <tr><td style="padding: 10px; border: 1px solid #ddd; background: #f9f9f9;"><strong>Kelas / Semester</strong></td><td style="padding: 10px; border: 1px solid #ddd;">${data.kelas} / Semester ${data.semester}</td></tr>
-                        <tr><td style="padding: 10px; border: 1px solid #ddd; background: #f9f9f9;"><strong>Nama Bank/E-wallet - Nama Pemilik Akun</strong></td><td style="padding: 10px; border: 1px solid #ddd;">${data.namaBank}</td></tr>
-                        <tr><td style="padding: 10px; border: 1px solid #ddd; background: #f9f9f9;"><strong>Waktu Pendaftaran</strong></td><td style="padding: 10px; border: 1px solid #ddd;">${data.waktuDaftar}</td></tr>
-                        <tr><td style="padding: 10px; border: 1px solid #ddd; background: #f9f9f9;"><strong>Status</strong></td><td style="padding: 10px; border: 1px solid #ddd; font-weight: bold; color: ${data.status === 'APPROVED' ? 'green' : '#ff9800'};">${data.status}</td></tr>
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px; font-size: 13px;">
+                        <tr><td style="padding: 8px 10px; border: 1px solid #ddd; width: 35%; background: #f9f9f9;"><strong>Nama Lengkap</strong></td><td style="padding: 8px 10px; border: 1px solid #ddd;">${data.nama}</td></tr>
+                        <tr><td style="padding: 8px 10px; border: 1px solid #ddd; background: #f9f9f9;"><strong>NIM</strong></td><td style="padding: 8px 10px; border: 1px solid #ddd;">${data.nim}</td></tr>
+                        <tr><td style="padding: 8px 10px; border: 1px solid #ddd; background: #f9f9f9;"><strong>Universitas / Fakultas</strong></td><td style="padding: 8px 10px; border: 1px solid #ddd;">${data.universitas} / ${data.fakultas}</td></tr>
+                        <tr><td style="padding: 8px 10px; border: 1px solid #ddd; background: #f9f9f9;"><strong>Program Studi</strong></td><td style="padding: 8px 10px; border: 1px solid #ddd;">${data.prodi}</td></tr>
+                        <tr><td style="padding: 8px 10px; border: 1px solid #ddd; background: #f9f9f9;"><strong>Kelas / Semester / Tahun</strong></td><td style="padding: 8px 10px; border: 1px solid #ddd;">${data.kelas} / Semester ${data.semester} / ${data.tahunMasuk || '-'}</td></tr>
+                        <tr><td style="padding: 8px 10px; border: 1px solid #ddd; background: #f9f9f9;"><strong>No. WA / Email</strong></td><td style="padding: 8px 10px; border: 1px solid #ddd;">${data.noWa || '-'} / ${data.email || '-'}</td></tr>
+                        <tr><td style="padding: 8px 10px; border: 1px solid #ddd; background: #f9f9f9;"><strong>Kontak Darurat (Wali)</strong></td><td style="padding: 8px 10px; border: 1px solid #ddd; white-space: pre-wrap;">${data.kontakWali || '-'}</td></tr>
+                        <tr><td style="padding: 8px 10px; border: 1px solid #ddd; background: #f9f9f9;"><strong>Metode Transfer / Rekening</strong></td><td style="padding: 8px 10px; border: 1px solid #ddd;">${data.namaBank} - ${data.noRekening || '-'}</td></tr>
+                        <tr><td style="padding: 8px 10px; border: 1px solid #ddd; background: #f9f9f9;"><strong>Waktu Pendaftaran</strong></td><td style="padding: 8px 10px; border: 1px solid #ddd;">${data.waktuDaftar}</td></tr>
+                        <tr><td style="padding: 8px 10px; border: 1px solid #ddd; background: #f9f9f9;"><strong>Status Verifikasi</strong></td><td style="padding: 8px 10px; border: 1px solid #ddd; font-weight: bold; color: ${data.status === 'APPROVED' ? 'green' : '#ff9800'};">${data.status}</td></tr>
                     </table>
 
-                    <h3 style="margin-bottom: 15px; color: #002244; font-size: 16px; border-bottom: 1px solid #ccc; padding-bottom: 5px;">Lampiran Dokumen / Bukti:</h3>
+                    <h3 style="margin-bottom: 15px; color: #002244; font-size: 15px; border-bottom: 1px solid #ccc; padding-bottom: 5px;">Lampiran Dokumen / Bukti:</h3>
                     
                     <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
                         <div style="width: 48%; margin-bottom: 15px; text-align: center;">
-                            <p style="font-size: 12px; margin-bottom: 5px; font-weight: bold; color: #555;">KTM</p>
-                            <img src="${data.buktiKtmUrl}" style="max-width: 100%; height: 200px; object-fit: contain; border: 1px solid #ddd; padding: 5px; border-radius: 5px;">
+                            <p style="font-size: 11px; margin-bottom: 5px; font-weight: bold; color: #555;">KTM</p>
+                            <img src="${data.buktiKtmUrl}" style="max-width: 100%; height: 180px; object-fit: contain; border: 1px solid #ddd; padding: 5px; border-radius: 5px;">
                         </div>
                         <div style="width: 48%; margin-bottom: 15px; text-align: center;">
-                            <p style="font-size: 12px; margin-bottom: 5px; font-weight: bold; color: #555;">Bukti Pembayaran</p>
-                            <img src="${data.buktiPembayaranUrl}" style="max-width: 100%; height: 200px; object-fit: contain; border: 1px solid #ddd; padding: 5px; border-radius: 5px;">
+                            <p style="font-size: 11px; margin-bottom: 5px; font-weight: bold; color: #555;">Bukti Pembayaran</p>
+                            <img src="${data.buktiPembayaranUrl}" style="max-width: 100%; height: 180px; object-fit: contain; border: 1px solid #ddd; padding: 5px; border-radius: 5px;">
                         </div>
                         <div style="width: 48%; margin-bottom: 15px; text-align: center;">
-                            <p style="font-size: 12px; margin-bottom: 5px; font-weight: bold; color: #555;">Bukti Follow IG HMPS</p>
-                            <img src="${data.buktiIgHmpsUrl}" style="max-width: 100%; height: 200px; object-fit: contain; border: 1px solid #ddd; padding: 5px; border-radius: 5px;">
+                            <p style="font-size: 11px; margin-bottom: 5px; font-weight: bold; color: #555;">Bukti Follow IG HMPS</p>
+                            <img src="${data.buktiIgHmpsUrl}" style="max-width: 100%; height: 180px; object-fit: contain; border: 1px solid #ddd; padding: 5px; border-radius: 5px;">
                         </div>
                         <div style="width: 48%; margin-bottom: 15px; text-align: center;">
-                            <p style="font-size: 12px; margin-bottom: 5px; font-weight: bold; color: #555;">Bukti Follow IG UPU</p>
-                            <img src="${data.buktiIgUpuUrl}" style="max-width: 100%; height: 200px; object-fit: contain; border: 1px solid #ddd; padding: 5px; border-radius: 5px;">
+                            <p style="font-size: 11px; margin-bottom: 5px; font-weight: bold; color: #555;">Bukti Follow IG UPU</p>
+                            <img src="${data.buktiIgUpuUrl}" style="max-width: 100%; height: 180px; object-fit: contain; border: 1px solid #ddd; padding: 5px; border-radius: 5px;">
                         </div>
                     </div>
                 </div>
             `;
 
-            // 3. Masukkan ke dalam DOM sementara
             document.body.appendChild(tempContainer);
             const element = document.getElementById(`pdf-content-${docId}`);
 
-            // 4. Konfigurasi
             const opt = {
                 margin:       0.5,
                 filename:     `Data_Kunjungan_${data.nim}_${data.nama.replace(/\s+/g, '_')}.pdf`,
@@ -451,7 +453,6 @@
                 jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
             };
 
-            // 5. Build PDF (dengan jeda waktu agar gambar ImgBB sempat termuat)
             try {
                 await new Promise(resolve => setTimeout(resolve, 500)); 
                 await html2pdf().set(opt).from(element).save();
@@ -459,7 +460,6 @@
                 console.error("Gagal membuat PDF:", error);
                 alert("Terjadi kesalahan saat memproses gambar. Pastikan internet stabil.");
             } finally {
-                // Bersihkan HTML dari DOM & kembalikan tombol
                 document.body.removeChild(tempContainer);
                 btn.innerHTML = originalText;
                 btn.disabled = false;
