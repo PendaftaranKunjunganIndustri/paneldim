@@ -310,8 +310,8 @@
                             <span style="font-size:10px; color:#aaa;"><i class="fas fa-envelope"></i> ${data.email || '-'}</span>
                         </td>
                         <td style="font-size:11px; line-height: 1.6;">
-                            <strong style="color:#fff;">${data.universitas}</strong><br>
-                            Fakultas: ${data.fakultas}<br>
+                            <strong style="color:#fff;">${data.universitas || '-'}</strong><br>
+                            Fakultas: ${data.fakultas || '-'}<br>
                             Prodi: ${data.prodi} (Smt: ${data.semester})<br>
                             Kelas: ${data.kelas} | Thn: ${data.tahunMasuk || '-'}
                         </td>
@@ -398,7 +398,7 @@
             tempContainer.style.left = '-9999px'; 
             tempContainer.style.top = '0';
             
-            // TEMPLATE PDF (Di-update agar memuat data baru secara lengkap)
+            // TEMPLATE PDF
             tempContainer.innerHTML = `
                 <div id="pdf-content-${docId}" style="width: 800px; padding: 40px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #333; background: #fff;">
                     <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 15px; margin-bottom: 20px;">
@@ -409,9 +409,9 @@
                     <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px; font-size: 13px;">
                         <tr><td style="padding: 8px 10px; border: 1px solid #ddd; width: 35%; background: #f9f9f9;"><strong>Nama Lengkap</strong></td><td style="padding: 8px 10px; border: 1px solid #ddd;">${data.nama}</td></tr>
                         <tr><td style="padding: 8px 10px; border: 1px solid #ddd; background: #f9f9f9;"><strong>NIM</strong></td><td style="padding: 8px 10px; border: 1px solid #ddd;">${data.nim}</td></tr>
-                        <tr><td style="padding: 8px 10px; border: 1px solid #ddd; background: #f9f9f9;"><strong>Universitas / Fakultas</strong></td><td style="padding: 8px 10px; border: 1px solid #ddd;">${data.universitas} / ${data.fakultas}</td></tr>
+                        <tr><td style="padding: 8px 10px; border: 1px solid #ddd; background: #f9f9f9;"><strong>Universitas / Fakultas</strong></td><td style="padding: 8px 10px; border: 1px solid #ddd;">${data.universitas || '-'} / ${data.fakultas || '-'}</td></tr>
                         <tr><td style="padding: 8px 10px; border: 1px solid #ddd; background: #f9f9f9;"><strong>Program Studi</strong></td><td style="padding: 8px 10px; border: 1px solid #ddd;">${data.prodi}</td></tr>
-                        <tr><td style="padding: 8px 10px; border: 1px solid #ddd; background: #f9f9f9;"><strong>Kelas / Semester / Tahun</strong></td><td style="padding: 8px 10px; border: 1px solid #ddd;">${data.kelas} / Semester ${data.semester} / ${data.tahunMasuk || '-'}</td></tr>
+                        <tr><td style="padding: 8px 10px; border: 1px solid #ddd; background: #f9f9f9;"><strong>Kelas / Semester / Tahun Masuk</strong></td><td style="padding: 8px 10px; border: 1px solid #ddd;">${data.kelas} / Semester ${data.semester} / ${data.tahunMasuk || '-'}</td></tr>
                         <tr><td style="padding: 8px 10px; border: 1px solid #ddd; background: #f9f9f9;"><strong>No. WA / Email</strong></td><td style="padding: 8px 10px; border: 1px solid #ddd;">${data.noWa || '-'} / ${data.email || '-'}</td></tr>
                         <tr><td style="padding: 8px 10px; border: 1px solid #ddd; background: #f9f9f9;"><strong>Kontak Darurat (Wali)</strong></td><td style="padding: 8px 10px; border: 1px solid #ddd; white-space: pre-wrap;">${data.kontakWali || '-'}</td></tr>
                         <tr><td style="padding: 8px 10px; border: 1px solid #ddd; background: #f9f9f9;"><strong>Metode Transfer / Rekening</strong></td><td style="padding: 8px 10px; border: 1px solid #ddd;">${data.namaBank} - ${data.noRekening || '-'}</td></tr>
